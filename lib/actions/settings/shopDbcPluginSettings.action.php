@@ -17,13 +17,15 @@ class shopDbcPluginSettingsAction extends waViewAction
         $plugin = wa('shop')->getPlugin('dbc');
 
         $info = [
-            'plugin_name'    => $plugin->getName(),
-            'plugin_version' => $plugin->getVersion(),
+            'plugin_name'      => $plugin->getName(),
+            'plugin_version'   => $plugin->getVersion(),
+            'shipping_methods' => $this->listMethods('shipping'),
+            'payment_methods'  => $this->listMethods('payment')
         ];
 
         $settings = $plugin->getSettings();
-        $settings['payment'] = $this->actualizeSelected($settings['payment'], $this->listMethods('payment'));
-        $settings['shipping'] = $this->actualizeSelected($settings['shipping'], $this->listMethods('shipping'));
+        $settings['payment'] = $this->actualizeSelected($settings['payment'], $info['payment_methods']);
+        $settings['shipping'] = $this->actualizeSelected($settings['shipping'], $info['shipping_methods']);
 
         $this->view->assign(compact('info', 'settings'));
     }
