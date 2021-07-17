@@ -80,4 +80,61 @@ class shopDbcPlugin extends shopPlugin
 
         return $this->typecasted_settings;
     }
+
+    /**
+     * Обработчик хука созания/редактирования заказа
+     *
+     * @param $data
+     */
+    public function handlerOrderAction($data)
+    {
+        if (!($order_id = intval($data['order_id'] ?? 0))) return;
+
+        $OrderParams = new shopOrderParamsModel();
+        try {
+            $params = $OrderParams->query("SELECT name, value FROM `shop_order_params` WHERE order_id=i:order_id AND name IN ('shipping_id', 'payment_id', 'plugin_dbc.shipping')")
+                ->fetchAll('name', true);
+        } catch (waDbException $e) {
+            return;
+        }
+
+        if (!$params || !is_array($params)) return;
+        if (!($shipping_id = intval($params['shipping_id'] ?? 0))) return;
+        if (!($payment_id = intval($params['payment_id'] ?? 0))) return;
+
+        if (!$this->isNullifyRequired($shipping_id, $payment_id)) {
+            if (isset($params['plugin_dbc.shipping'])) {
+                $OrderParams->deleteByField(['order_id' => $order_id, 'name' => 'plugin_dbc.shipping']);
+            }
+            return;
+        }
+
+        $old_dbc_value = $params['plugin_dbc.shipping'] ?? null;
+        $ShopOrder = new shopOrderModel();
+        try {
+            $shipping = $ShopOrder->query("SELECT shipping FROM `shop_order` WHERE id=i:id", ['id' => $order_id])->fetchField();
+        } catch (waDbException $e) {
+            return;
+        }
+        if (!$shipping) return;
+
+        $new_dbc_value = (float)$shipping;
+        $ShopOrder->updateById($order_id, ['shipping' => 0.0]);
+        $OrderParams->exec(
+            "INSERT INTO `shop_order_params` (order_id, name, value) VALUES (i:order_id, 'plugin_dbc.shipping', s:value) ON DUPLICATE KEY UPDATE value=s:value",
+            ['order_id' => $order_id, 'value' => number_format($shipping, 4, '.', '')]
+        );
+
+        $log_message = "Стоимость доставки из заказа в размере <b>%s</b> заменена на 0 плагином 'Оплата доставки при получении'";
+        $after_state_id = $data['after_state_id'] ?? '';
+        (new shopOrderLogModel())->insert([
+            'order_id'        => $order_id,
+            'contact_id'      => null,
+            'action_id'       => '',
+            'datetime'        => date("Y-m-d H:i:s"),
+            'before_state_id' => $after_state_id,
+            'after_state_id'  => $after_state_id,
+            'text'            => $log_message
+        ]);
+    }
 }
