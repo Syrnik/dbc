@@ -7,6 +7,7 @@ return [
     'shop_settings' => true,
     'handlers'      => [
         'order_action.create' => 'handlerOrderAction',
-        'order_action.edit'   => 'handlerOrderAction'
+        'order_action.edit'   => 'handlerOrderAction',
+        'backend_order'       => 'handlerBackendOrder'
     ],
 ];

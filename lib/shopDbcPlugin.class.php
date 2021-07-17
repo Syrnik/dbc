@@ -131,7 +131,10 @@ class shopDbcPlugin extends shopPlugin
         $old_dbc_value = $params['plugin_dbc.shipping'] ?? null;
         $ShopOrder = new shopOrderModel();
         try {
-            $shipping = $ShopOrder->query("SELECT shipping FROM `shop_order` WHERE id=i:id", ['id' => $order_id])->fetchField();
+            $order_data = $ShopOrder->query("SELECT shipping, total FROM `shop_order` WHERE id=i:id LIMIT 1", ['id' => $order_id])->fetchAll();
+            $order_data = array_shift($order_data);
+            $shipping = $order_data['shipping'];
+            $total = (float)$order_data['total'];
         } catch (waDbException $e) {
             return;
         }
@@ -140,13 +143,15 @@ class shopDbcPlugin extends shopPlugin
         $new_dbc_value = (float)$shipping;
         $new_dbc_value_str = number_format($new_dbc_value, 4, '.', '');
 
-        $ShopOrder->updateById($order_id, ['shipping' => 0.0]);
+        //$ShopOrder->updateById($order_id, ['shipping' => 0.0]);
+        $total = max(0.0, $total - $new_dbc_value);
+        $ShopOrder->exec("UPDATE shop_order SET total=f:total, shipping=0.0 WHERE id=i:id", ['id' => $order_id, 'shipping' => $new_dbc_value, 'total' => $total]);
         try {
             $OrderParams->exec(
                 "INSERT INTO `shop_order_params` (order_id, name, value) VALUES (i:order_id, 'plugin_dbc.shipping', s:value) ON DUPLICATE KEY UPDATE value=s:value",
                 ['order_id' => $order_id, 'value' => $new_dbc_value_str]
             );
-        }catch (Exception $e) {
+        } catch (Exception $e) {
             return;
         }
 
@@ -161,5 +166,20 @@ class shopDbcPlugin extends shopPlugin
             'after_state_id'  => $after_state_id,
             'text'            => $log_message
         ]);
+    }
+
+    public function handlerBackendOrder($params): array
+    {
+        if (!is_array($params)) return [];
+        if (!($order_params = $params['params'] ?? null) || !is_array($order_params))
+            return [];
+        if (($dbc = $order_params['plugin_dbc.shipping'] ?? null) === null) return [];
+
+        $currency = $params['currency'] ?? 'RUB';
+        $dbc_shipping = waCurrency::format('%{h}', $dbc, $currency);
+
+        $html = '<h3 style="margin-bottom: 0"><span class="gray">Стоимость за доставку при получении &mdash;</span> ' . $dbc_shipping . '</h3><p style="padding-left: 20px"><span class="hint">Стоимость посчитана при создании заказа и показана клиенту.</span></p>';
+
+        return ['info_section'=>$html];
     }
 }
