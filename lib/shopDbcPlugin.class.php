@@ -168,6 +168,10 @@ class shopDbcPlugin extends shopPlugin
         ]);
     }
 
+    /**
+     * @param $params
+     * @return array|string[]
+     */
     public function handlerBackendOrder($params): array
     {
         if (!is_array($params)) return [];
@@ -176,10 +180,14 @@ class shopDbcPlugin extends shopPlugin
         if (($dbc = $order_params['plugin_dbc.shipping'] ?? null) === null) return [];
 
         $currency = $params['currency'] ?? 'RUB';
-        $dbc_shipping = waCurrency::format('%{h}', $dbc, $currency);
+        try {
+            $dbc_shipping = waCurrency::format('%{h}', $dbc, $currency);
+        } catch (waException $e) {
+            return [];
+        }
 
         $html = '<h3 style="margin-bottom: 0"><span class="gray">Стоимость за доставку при получении &mdash;</span> ' . $dbc_shipping . '</h3><p style="padding-left: 20px"><span class="hint">Стоимость посчитана при создании заказа и показана клиенту.</span></p>';
 
-        return ['info_section'=>$html];
+        return ['info_section' => $html];
     }
 }
