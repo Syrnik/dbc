@@ -27,6 +27,29 @@ class shopDbcPlugin extends shopPlugin
     }
 
     /**
+     * Нужно ли обнулять доставку для выбранных способов доставки и оплаты
+     *
+     * @param int $shipping_id
+     * @param int $payment_id
+     * @return bool
+     */
+    public function isNullifyRequired(int $shipping_id, int $payment_id): bool
+    {
+        $shipping_methods = $this->getSettings('shipping');
+        $payment_methods = $this->getSettings('payment');
+
+        if ($shipping_methods['all'] && $payment_methods['all']) return true;
+
+        $selected_shipping = array_column($shipping_methods['selected'], 'enabled', 'id');
+        $selected_payment = array_column($shipping_methods['selected'], 'enabled', 'id');
+
+        $shipping = $shipping_methods['all'] || (isset($selected_shipping[$shipping_id]) && $selected_shipping['id']);
+        $payment = $payment_methods['all'] || (isset($selected_payment[$shipping_id]) && $selected_payment['id']);
+
+        return $shipping && $payment;
+    }
+
+    /**
      * @param array $settings
      * @return array
      */
