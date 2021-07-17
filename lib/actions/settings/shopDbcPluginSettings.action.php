@@ -63,7 +63,7 @@ class shopDbcPluginSettingsAction extends waViewAction
 
         foreach ($setting['selected'] as $index => $item) {
             if (isset($methods[$item['id']])) {
-                unset($methods['id']);
+                unset($methods[$item['id']]);
                 continue;
             };
             unset($setting['selected'][$index]);
