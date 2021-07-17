@@ -19,7 +19,7 @@ class shopDbcPlugin extends shopPlugin
      */
     public function getSettings($name = null)
     {
-        if (!$this->typecasted_settings) $this->typecastSettings(parent::getSettings($name));
+        if (!$this->typecasted_settings) $this->typecastSettings(parent::getSettings());
 
         if ($name === null) return $this->typecasted_settings;
 
@@ -40,11 +40,28 @@ class shopDbcPlugin extends shopPlugin
 
         if ($shipping_methods['all'] && $payment_methods['all']) return true;
 
-        $selected_shipping = array_column($shipping_methods['selected'], 'enabled', 'id');
-        $selected_payment = array_column($shipping_methods['selected'], 'enabled', 'id');
+        $selected_shipping = false;
+        if (!$shipping_methods['all'])
+            foreach ($shipping_methods['selected'] as $m) {
+                if ($m['id'] === $shipping_id) {
+                    $selected_shipping = $m['enabled'];
+                    break;
+                }
+            }
+        else $selected_shipping = true;
 
-        $shipping = $shipping_methods['all'] || (isset($selected_shipping[$shipping_id]) && $selected_shipping['id']);
-        $payment = $payment_methods['all'] || (isset($selected_payment[$shipping_id]) && $selected_payment['id']);
+        $selected_payment = false;
+        if (!$payment_methods['all'])
+            foreach ($payment_methods['selected'] as $m) {
+                if ($m['id'] === $payment_id) {
+                    $selected_payment = $m['enabled'];
+                    break;
+                }
+            }
+        else $selected_payment = true;
+
+        $shipping = $shipping_methods['all'] || $selected_shipping;
+        $payment = $payment_methods['all'] || $selected_payment;
 
         return $shipping && $payment;
     }
@@ -92,8 +109,10 @@ class shopDbcPlugin extends shopPlugin
 
         $OrderParams = new shopOrderParamsModel();
         try {
-            $params = $OrderParams->query("SELECT name, value FROM `shop_order_params` WHERE order_id=i:order_id AND name IN ('shipping_id', 'payment_id', 'plugin_dbc.shipping')")
-                ->fetchAll('name', true);
+            $params = $OrderParams->query(
+                "SELECT name, value FROM `shop_order_params` WHERE order_id=i:order_id AND name IN ('shipping_id', 'payment_id', 'plugin_dbc.shipping')",
+                ['order_id' => $order_id]
+            )->fetchAll('name', true);
         } catch (waDbException $e) {
             return;
         }
@@ -119,13 +138,19 @@ class shopDbcPlugin extends shopPlugin
         if (!$shipping) return;
 
         $new_dbc_value = (float)$shipping;
-        $ShopOrder->updateById($order_id, ['shipping' => 0.0]);
-        $OrderParams->exec(
-            "INSERT INTO `shop_order_params` (order_id, name, value) VALUES (i:order_id, 'plugin_dbc.shipping', s:value) ON DUPLICATE KEY UPDATE value=s:value",
-            ['order_id' => $order_id, 'value' => number_format($shipping, 4, '.', '')]
-        );
+        $new_dbc_value_str = number_format($new_dbc_value, 4, '.', '');
 
-        $log_message = "Стоимость доставки из заказа в размере <b>%s</b> заменена на 0 плагином 'Оплата доставки при получении'";
+        $ShopOrder->updateById($order_id, ['shipping' => 0.0]);
+        try {
+            $OrderParams->exec(
+                "INSERT INTO `shop_order_params` (order_id, name, value) VALUES (i:order_id, 'plugin_dbc.shipping', s:value) ON DUPLICATE KEY UPDATE value=s:value",
+                ['order_id' => $order_id, 'value' => $new_dbc_value_str]
+            );
+        }catch (Exception $e) {
+            return;
+        }
+
+        $log_message = sprintf("Стоимость доставки из заказа в размере <b>%s</b> заменена на 0 плагином 'Оплата доставки при получении'", $new_dbc_value_str);
         $after_state_id = $data['after_state_id'] ?? '';
         (new shopOrderLogModel())->insert([
             'order_id'        => $order_id,
