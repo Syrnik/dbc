@@ -1,0 +1,36 @@
+<div id="shop-turbopages-plugin-settings-wrapper">
+    <h1>{$info.plugin_name|escape}
+        <span class="hint">v.{$info.plugin_version}</span></h1>
+    <div id="shop-dbc-plugin-settings-js"><i class="icon16 loading"></i></div>
+</div>
+<script>
+    $(function () {
+        const defer = $.Deferred();
+        if (typeof ShopDbcPluginSettings != 'undefined') {
+            defer.resolve();
+            return;
+        } else {
+            $.getScript('{$wa_app_static_url}plugins/dbc/js/settings.js')
+                .done(function () {
+                    defer.resolve();
+                })
+                .fail(() => {
+                        defer.reject();
+                        return false;
+                    }
+                );
+        }
+
+        defer.then(function () {
+            ShopDbcPluginSettings({
+                el: '#shop-dbc-plugin-settings-js',
+                info: {$info|json_encode:256},
+                settings: {$settings|json_encode:256}
+            });
+        }, () => {
+            $('#shop-dbc-plugin-settings-js').append('<p class="red">Ошибка загрузки скрипта настроек :(</p>');
+            return false;
+        });
+    })
+
+</script>
