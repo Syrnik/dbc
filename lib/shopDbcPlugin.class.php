@@ -1,7 +1,7 @@
 <?php
 /**
  * @author Serge Rodovnichenko <serge@syrnik.com>
- * @copyright Serge Rodovnichenko, 2021
+ * @copyright Serge Rodovnichenko, 2021-2022
  * @license Webasyst
  */
 declare(strict_types=1);
@@ -100,7 +100,7 @@ class shopDbcPlugin extends shopPlugin
 
     /**
      * Обработчик хука создания/редактирования заказа
-     *
+     * @EventHandler order_action
      * @param $data
      */
     public function handlerOrderAction($data)
@@ -169,6 +169,7 @@ class shopDbcPlugin extends shopPlugin
     }
 
     /**
+     * @EventHandler backend_order
      * @param $params
      * @return array|string[]
      */
