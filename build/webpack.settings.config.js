@@ -5,7 +5,7 @@ let config = {
     entry: './settings/settings.js',
     output: {
         path: __dirname,
-        filename: '../js/settings.js',
+        filename: '../js/settings-legacy.js',
         libraryTarget: 'umd',
         library: 'ShopDbcPluginSettings',
         libraryExport: 'default'

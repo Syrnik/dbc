@@ -10,7 +10,7 @@
             defer.resolve();
             return;
         } else {
-            $.getScript('{$wa_app_static_url}plugins/dbc/js/settings.js')
+            $.getScript('{$wa_app_static_url}plugins/dbc/js/settings-legacy.js')
                 .done(function () {
                     defer.resolve();
                 })
@@ -28,9 +28,8 @@
                 settings: {$settings|json_encode:256}
             });
         }, () => {
-            $('#shop-dbc-plugin-settings-js').append('<p class="red">Ошибка загрузки скрипта настроек :(</p>');
+            $('#shop-dbc-plugin-settings-js').append('<p class="red">{_wp('Ошибка загрузки скрипта настроек :(')}</p>');
             return false;
         });
     })
-
 </script>
