@@ -1,7 +1,7 @@
 <?php
 /**
  * @author Serge Rodovnichenko <serge@syrnik.com>
- * @copyright Serge Rodovnichenko, 2021-2022
+ * @copyright Serge Rodovnichenko, 2021-2023
  * @license Webasyst
  */
 declare(strict_types=1);
@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 class shopDbcPlugin extends shopPlugin
 {
-    protected $typecasted_settings;
+    protected array $typecasted_settings;
 
     /**
      * @param null|string|int $name
@@ -19,7 +19,7 @@ class shopDbcPlugin extends shopPlugin
      */
     public function getSettings($name = null)
     {
-        if (!$this->typecasted_settings) $this->typecastSettings(parent::getSettings());
+        if (!isset($this->typecasted_settings)) $this->typecastSettings(parent::getSettings());
 
         if ($name === null) return $this->typecasted_settings;
 
@@ -72,7 +72,7 @@ class shopDbcPlugin extends shopPlugin
      */
     protected function typecastSettings(array $settings): array
     {
-        if ($this->typecasted_settings) return $this->typecasted_settings;
+        if (isset($this->typecasted_settings)) return $this->typecasted_settings;
 
         foreach ($settings as $key => $setting) {
             switch ($key) {
