@@ -59,7 +59,7 @@ class shopDbcPluginSettingsAction extends waViewAction
      *
      * @param array $setting
      * @param array $methods
-     * @return array
+     * @return array{ all:bool, selected:array{ id:int, enabled:bool }[] }
      */
     protected function actualizeSelected(array $setting, array $methods): array
     {

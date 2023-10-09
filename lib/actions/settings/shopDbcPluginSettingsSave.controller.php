@@ -11,6 +11,10 @@ declare(strict_types=1);
  */
 class shopDbcPluginSettingsSaveController extends waJsonController
 {
+    /**
+     * @return void
+     * @throws waException
+     */
     public function execute()
     {
         $settings = waRequest::post('settings', null, waRequest::TYPE_STRING_TRIM);

@@ -1,0 +1,17 @@
+<div id="s-dbc-plugin-settings"></div>
+<script>
+    (function () {
+        $.wa.loadSources([
+            {
+                id: 's-dbc-plugin-settings-js',
+                type: 'js',
+                uri: '{$wa_app_static_url}plugins/dbc/js/settings.js?v={$info.plugin_version}'
+            }
+        ]).done(
+            () => ShopDbcPluginSettings({
+                info: {$info|json_encode:256},
+                settings: {$settings|json_encode:256}
+            }).mount('#s-dbc-plugin-settings')
+        );
+    })();
+</script>
