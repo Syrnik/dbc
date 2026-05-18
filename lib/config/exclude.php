@@ -43,5 +43,11 @@ return array(
     'lib/vendors/*/ci-gitlab/*',
     'lib/vendors/bin',
     'lib/vendors/jms/metadata/tests/Metadata/Tests',
-    '.editorconfig'
+    '.editorconfig',
+    'src/*',
+    'package.json',
+    'package-lock.json',
+    'tsconfig.json',
+    'vite.config.settings.ts',
+    'vite.config.ts',
 );
