@@ -1,0 +1,28 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: shop/plugins/dbc\n"
+"POT-Creation-Date: 2026-05-18 13:45+0300\n"
+"PO-Revision-Date: \n"
+"Last-Translator: shop/plugins/dbc\n"
+"Language-Team: shop/plugins/dbc\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-Language: en_US\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"X-Poedit-Basepath: utf-8\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPath-1: .\n"
+
+msgid "Saved"
+msgstr ""
+
+msgid "<h3 style=\"margin-bottom: 0\"><span class=\"gray\">The cost for delivery upon receipt is</span> %s</h3><p style=\"padding-left: 20px\"><span class=\"hint\">The cost is calculated when creating the order and shown to the client.</span></p>"
+msgstr ""
+
+msgid "The cost of delivery from the order in the amount of <b>%s</b> has been replaced by 0 by the plugin 'Payment for delivery upon receipt'"
+msgstr ""
+
+msgid "Error loading the settings script :("
+msgstr ""

@@ -20,6 +20,6 @@ class shopDbcPluginSettingsSaveController extends waJsonController
         $settings = waRequest::post('settings', null, waRequest::TYPE_STRING_TRIM);
         $settings = waUtils::jsonDecode($settings, true);
         wa('shop')->getPlugin('dbc')->saveSettings($settings);
-        $this->response = ['message' => 'Сохранено'];
+        $this->response = ['message' => _wp('Saved')];
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author Serge Rodovnichenko <serge@syrnik.com>
  * @copyright Serge Rodovnichenko, 2021-2023
@@ -19,9 +20,13 @@ class shopDbcPlugin extends shopPlugin
      */
     public function getSettings($name = null)
     {
-        if (!isset($this->typecasted_settings)) $this->typecastSettings(parent::getSettings());
+        if (!isset($this->typecasted_settings)) {
+            $this->typecastSettings(parent::getSettings());
+        }
 
-        if ($name === null) return $this->typecasted_settings;
+        if ($name === null) {
+            return $this->typecasted_settings;
+        }
 
         return $this->typecasted_settings[$name] ?? null;
     }
@@ -38,27 +43,33 @@ class shopDbcPlugin extends shopPlugin
         $shipping_methods = $this->getSettings('shipping');
         $payment_methods = $this->getSettings('payment');
 
-        if ($shipping_methods['all'] && $payment_methods['all']) return true;
+        if ($shipping_methods['all'] && $payment_methods['all']) {
+            return true;
+        }
 
         $selected_shipping = false;
-        if (!$shipping_methods['all'])
+        if (!$shipping_methods['all']) {
             foreach ($shipping_methods['selected'] as $m) {
                 if ($m['id'] === $shipping_id) {
                     $selected_shipping = $m['enabled'];
                     break;
                 }
             }
-        else $selected_shipping = true;
+        } else {
+            $selected_shipping = true;
+        }
 
         $selected_payment = false;
-        if (!$payment_methods['all'])
+        if (!$payment_methods['all']) {
             foreach ($payment_methods['selected'] as $m) {
                 if ($m['id'] === $payment_id) {
                     $selected_payment = $m['enabled'];
                     break;
                 }
             }
-        else $selected_payment = true;
+        } else {
+            $selected_payment = true;
+        }
 
         $shipping = $shipping_methods['all'] || $selected_shipping;
         $payment = $payment_methods['all'] || $selected_payment;
@@ -72,7 +83,9 @@ class shopDbcPlugin extends shopPlugin
      */
     protected function typecastSettings(array $settings): array
     {
-        if (isset($this->typecasted_settings)) return $this->typecasted_settings;
+        if (isset($this->typecasted_settings)) {
+            return $this->typecasted_settings;
+        }
 
         foreach ($settings as $key => $setting) {
             switch ($key) {
@@ -102,10 +115,13 @@ class shopDbcPlugin extends shopPlugin
      * Обработчик хука создания/редактирования заказа
      * @EventHandler order_action
      * @param $data
+     * @throws waException
      */
     public function handlerOrderAction($data)
     {
-        if (!($order_id = intval($data['order_id'] ?? 0))) return;
+        if (!($order_id = intval($data['order_id'] ?? 0))) {
+            return;
+        }
 
         $OrderParams = new shopOrderParamsModel();
         try {
@@ -117,9 +133,15 @@ class shopDbcPlugin extends shopPlugin
             return;
         }
 
-        if (!$params || !is_array($params)) return;
-        if (!($shipping_id = intval($params['shipping_id'] ?? 0))) return;
-        if (!($payment_id = intval($params['payment_id'] ?? 0))) return;
+        if (!$params || !is_array($params)) {
+            return;
+        }
+        if (!($shipping_id = intval($params['shipping_id'] ?? 0))) {
+            return;
+        }
+        if (!($payment_id = intval($params['payment_id'] ?? 0))) {
+            return;
+        }
 
         if (!$this->isNullifyRequired($shipping_id, $payment_id)) {
             if (isset($params['plugin_dbc.shipping'])) {
@@ -131,21 +153,29 @@ class shopDbcPlugin extends shopPlugin
         $old_dbc_value = $params['plugin_dbc.shipping'] ?? null;
         $ShopOrder = new shopOrderModel();
         try {
-            $order_data = $ShopOrder->query("SELECT shipping, total FROM `shop_order` WHERE id=i:id LIMIT 1", ['id' => $order_id])->fetchAll();
+            $order_data = $ShopOrder->query(
+                "SELECT shipping, total FROM `shop_order` WHERE id=i:id LIMIT 1",
+                ['id' => $order_id]
+            )->fetchAll();
             $order_data = array_shift($order_data);
             $shipping = $order_data['shipping'];
             $total = (float)$order_data['total'];
         } catch (waDbException $e) {
             return;
         }
-        if (!$shipping) return;
+        if (!$shipping) {
+            return;
+        }
 
         $new_dbc_value = (float)$shipping;
         $new_dbc_value_str = number_format($new_dbc_value, 4, '.', '');
 
         //$ShopOrder->updateById($order_id, ['shipping' => 0.0]);
         $total = max(0.0, $total - $new_dbc_value);
-        $ShopOrder->exec("UPDATE shop_order SET total=f:total, shipping=0.0 WHERE id=i:id", ['id' => $order_id, 'shipping' => $new_dbc_value, 'total' => $total]);
+        $ShopOrder->exec(
+            "UPDATE shop_order SET total=f:total, shipping=0.0 WHERE id=i:id",
+            ['id' => $order_id, 'shipping' => $new_dbc_value, 'total' => $total]
+        );
         try {
             $OrderParams->exec(
                 "INSERT INTO `shop_order_params` (order_id, name, value) VALUES (i:order_id, 'plugin_dbc.shipping', s:value) ON DUPLICATE KEY UPDATE value=s:value",
@@ -155,16 +185,19 @@ class shopDbcPlugin extends shopPlugin
             return;
         }
 
-        $log_message = sprintf("Стоимость доставки из заказа в размере <b>%s</b> заменена на 0 плагином 'Оплата доставки при получении'", $new_dbc_value_str);
+        $log_message = sprintf_wp(
+            "The cost of delivery from the order in the amount of <b>%s</b> has been replaced by 0 by the plugin 'Payment for delivery upon receipt'",
+            $new_dbc_value_str
+        );
         $after_state_id = $data['after_state_id'] ?? '';
         (new shopOrderLogModel())->insert([
-            'order_id'        => $order_id,
-            'contact_id'      => null,
-            'action_id'       => '',
-            'datetime'        => date("Y-m-d H:i:s"),
+            'order_id' => $order_id,
+            'contact_id' => null,
+            'action_id' => '',
+            'datetime' => date("Y-m-d H:i:s"),
             'before_state_id' => $after_state_id,
-            'after_state_id'  => $after_state_id,
-            'text'            => $log_message
+            'after_state_id' => $after_state_id,
+            'text' => $log_message
         ]);
     }
 
@@ -172,13 +205,19 @@ class shopDbcPlugin extends shopPlugin
      * @EventHandler backend_order
      * @param $params
      * @return array|string[]
+     * @throws waException
      */
     public function handlerBackendOrder($params): array
     {
-        if (!is_array($params)) return [];
-        if (!($order_params = $params['params'] ?? null) || !is_array($order_params))
+        if (!is_array($params)) {
             return [];
-        if (($dbc = $order_params['plugin_dbc.shipping'] ?? null) === null) return [];
+        }
+        if (!($order_params = $params['params'] ?? null) || !is_array($order_params)) {
+            return [];
+        }
+        if (($dbc = $order_params['plugin_dbc.shipping'] ?? null) === null) {
+            return [];
+        }
 
         $currency = $params['currency'] ?? 'RUB';
         try {
@@ -187,7 +226,11 @@ class shopDbcPlugin extends shopPlugin
             return [];
         }
 
-        $html = '<h3 style="margin-bottom: 0"><span class="gray">Стоимость за доставку при получении &mdash;</span> ' . $dbc_shipping . '</h3><p style="padding-left: 20px"><span class="hint">Стоимость посчитана при создании заказа и показана клиенту.</span></p>';
+        $html = sprintf_wp(
+            '<h3 style="margin-bottom: 0"><span class="gray">The cost for delivery upon receipt is</span> %s</h3><p style="padding-left: 20px"><span class="hint">The cost is calculated when creating the order and shown to the client.</span></p>',
+            $dbc_shipping
+        );
+
 
         return ['info_section' => $html];
     }
