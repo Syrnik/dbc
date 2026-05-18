@@ -4,12 +4,14 @@ import WaFieldSimple from './WaFieldSimple.vue'
 
 declare const $: any
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
     settings: object
     url: string
     allowed?: boolean
     iconClass?: Record<string, string | string[]>
-}>()
+}>(), {
+    allowed: true,
+})
 
 const emit = defineEmits<{ (e: 'submitting', value: boolean): void }>()
 
