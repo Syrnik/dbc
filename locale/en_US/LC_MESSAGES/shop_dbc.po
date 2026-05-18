@@ -15,6 +15,12 @@ msgstr ""
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPath-1: .\n"
 
+msgid "Payment for delivery upon receipt"
+msgstr ""
+
+msgid "Ability to hide the delivery cost in an order so that when paying online the client pays only for the order without delivery"
+msgstr ""
+
 msgid "Saved"
 msgstr ""
 
