@@ -25,7 +25,8 @@
             ShopDbcPluginSettings({
                 el: '#shop-dbc-plugin-settings-js',
                 info: {$info|json_encode:256},
-                settings: {$settings|json_encode:256}
+                settings: {$settings|json_encode:256},
+                i18n: {$i18n|json_encode:256}
             });
         }, () => {
             $('#shop-dbc-plugin-settings-js').append('<p class="red">{_wp('Error loading the settings script :(')}</p>');

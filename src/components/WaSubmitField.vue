@@ -7,6 +7,7 @@ declare const $: any
 const props = withDefaults(defineProps<{
     settings: object
     url: string
+    label: string
     allowed?: boolean
     iconClass?: Record<string, string | string[]>
 }>(), {
@@ -59,7 +60,7 @@ function save() {
 
 <template>
     <WaFieldSimple :value-class="[{ submit: true }, statusClass]">
-        <button class="green button" type="button" @click="save" :disabled="buttonDisabled">Сохранить</button>
+        <button class="green button" type="button" @click="save" :disabled="buttonDisabled">{{ label }}</button>
         <span v-show="status.length">
             <i :class="statusIconClass" v-if="status.length"></i>
             {{ statusMsg }}

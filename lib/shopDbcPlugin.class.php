@@ -227,7 +227,7 @@ class shopDbcPlugin extends shopPlugin
         }
 
         $html = sprintf_wp(
-            '<h3 style="margin-bottom: 0"><span class="gray">The cost for delivery upon receipt is</span> %s</h3><p style="padding-left: 20px"><span class="hint">The cost is calculated when creating the order and shown to the client.</span></p>',
+            '<h3 style="margin-bottom: 0"><span class="gray">The cost for delivery upon receipt is</span> %s</h3><p style="padding-left: 20px"><span class="hint">The cost was calculated when the order was created and shown to the client.</span></p>',
             $dbc_shipping
         );
 

@@ -16,13 +16,37 @@ msgstr ""
 "X-Poedit-SearchPath-1: .\n"
 
 msgid "Saved"
-msgstr ""
+msgstr "Сохранено"
 
-msgid "<h3 style=\"margin-bottom: 0\"><span class=\"gray\">The cost for delivery upon receipt is</span> %s</h3><p style=\"padding-left: 20px\"><span class=\"hint\">The cost is calculated when creating the order and shown to the client.</span></p>"
-msgstr ""
+msgid "<h3 style=\"margin-bottom: 0\"><span class=\"gray\">The cost for delivery upon receipt is</span> %s</h3><p style=\"padding-left: 20px\"><span class=\"hint\">The cost was calculated when the order was created and shown to the client.</span></p>"
+msgstr "<h3 style=\"margin-bottom: 0\"><span class=\"gray\">Стоимость доставки при получении:</span> %s</h3><p style=\"padding-left: 20px\"><span class=\"hint\">Стоимость рассчитана при создании заказа и показана клиенту.</span></p>"
 
 msgid "The cost of delivery from the order in the amount of <b>%s</b> has been replaced by 0 by the plugin 'Payment for delivery upon receipt'"
-msgstr ""
+msgstr "Стоимость доставки в заказе на сумму <b>%s</b> заменена на 0 плагином «Оплата доставки при получении»"
 
 msgid "Error loading the settings script :("
-msgstr ""
+msgstr "Ошибка загрузки скрипта настроек :("
+
+msgid "Shipping methods"
+msgstr "Способы доставки"
+
+msgid "any shipping methods"
+msgstr "любые способы доставки"
+
+msgid "Select the shipping methods for the plugin to trigger. If none selected, the plugin will be disabled"
+msgstr "Выберите способы доставки, для которых должен срабатывать плагин. Если не выбрать ни одного, плагин отключится"
+
+msgid "Payment methods"
+msgstr "Способы оплаты"
+
+msgid "any payment methods"
+msgstr "любые способы оплаты"
+
+msgid "Select the payment methods for the plugin to trigger. If none selected, the plugin will be disabled"
+msgstr "Выберите способы оплаты, для которых должен срабатывать плагин. Если не выбрать ни одного, плагин отключится"
+
+msgid "Unknown or deleted method"
+msgstr "Неизвестный или удалённый способ"
+
+msgid "Save"
+msgstr "Сохранить"

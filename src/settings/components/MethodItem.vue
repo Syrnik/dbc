@@ -5,6 +5,7 @@ import type { MethodSetting, ShippingPaymentMethod } from '../../types'
 const props = defineProps<{
     modelValue: MethodSetting
     method?: ShippingPaymentMethod
+    unknownMethod: string
 }>()
 const emit = defineEmits<{ (e: 'update:modelValue', value: MethodSetting): void }>()
 
@@ -12,7 +13,7 @@ const setting = reactive({ ...props.modelValue })
 
 const shopMethod = computed(() => props.method ?? {
     id: setting.id,
-    name: 'Неизвестный или удалённый способ',
+    name: props.unknownMethod,
     shop_enabled: false,
     unknown: true,
 })

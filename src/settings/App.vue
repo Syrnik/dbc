@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { reactive } from 'vue'
-import type { PluginInfo, PluginSettings } from '../types'
+import type { PluginInfo, PluginSettings, I18n } from '../types'
 import Methods from './components/Methods.vue'
 import WaSubmitField from '../components/WaSubmitField.vue'
 
-const props = defineProps<{ info: PluginInfo; settings: PluginSettings }>()
+const props = defineProps<{ info: PluginInfo; settings: PluginSettings; i18n: I18n }>()
 const setting = reactive({ ...props.settings })
 </script>
 
@@ -12,23 +12,24 @@ const setting = reactive({ ...props.settings })
     <form>
         <div class="field-group">
             <Methods
-                name="Способы доставки"
+                :i18n="i18n.shipping"
+                :unknown-method="i18n.unknown_method"
                 :methods="info.shipping_methods"
-                methods_type="доставки"
                 v-model="setting.shipping"
             />
         </div>
         <div class="field-group">
             <Methods
-                name="Способы оплаты"
+                :i18n="i18n.payment"
+                :unknown-method="i18n.unknown_method"
                 :methods="info.payment_methods"
-                methods_type="оплаты"
                 v-model="setting.payment"
             />
         </div>
         <WaSubmitField
             :settings="setting"
             url="?plugin=dbc&module=settings&action=save"
+            :label="i18n.save"
             :icon-class="{ success: 'icon16 yes' }"
         />
     </form>

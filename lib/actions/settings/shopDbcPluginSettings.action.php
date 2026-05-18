@@ -31,7 +31,22 @@ class shopDbcPluginSettingsAction extends waViewAction
         $settings['payment'] = $this->actualizeSelected($settings['payment'], $info['payment_methods']);
         $settings['shipping'] = $this->actualizeSelected($settings['shipping'], $info['shipping_methods']);
 
-        $this->view->assign(compact('info', 'settings'));
+        $i18n = [
+            'shipping' => [
+                'name' => _wp('Shipping methods'),
+                'any'  => _wp('any shipping methods'),
+                'hint' => _wp('Select the shipping methods for the plugin to trigger. If none selected, the plugin will be disabled'),
+            ],
+            'payment' => [
+                'name' => _wp('Payment methods'),
+                'any'  => _wp('any payment methods'),
+                'hint' => _wp('Select the payment methods for the plugin to trigger. If none selected, the plugin will be disabled'),
+            ],
+            'unknown_method' => _wp('Unknown or deleted method'),
+            'save'           => _wp('Save'),
+        ];
+
+        $this->view->assign(compact('info', 'settings', 'i18n'));
     }
 
     /**

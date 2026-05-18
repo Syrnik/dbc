@@ -26,3 +26,16 @@ export interface PluginInfo {
     plugin_name: string
     plugin_version: string
 }
+
+export interface MethodGroupI18n {
+    name: string
+    any: string
+    hint: string
+}
+
+export interface I18n {
+    shipping: MethodGroupI18n
+    payment: MethodGroupI18n
+    unknown_method: string
+    save: string
+}
