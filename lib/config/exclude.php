@@ -1,7 +1,9 @@
 <?php
 return array(
     'README.md',
+    'README.en.md',
     'CHANGELOG.md',
+    'LICENSE',
     'CONTRIBUTING.md',
     'contributors.txt',
     'img/screenshot_*',
@@ -50,4 +52,5 @@ return array(
     'tsconfig.json',
     'vite.config.settings.ts',
     'vite.config.ts',
+    'compress-app-plugin.php',
 );
