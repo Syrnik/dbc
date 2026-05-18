@@ -5,7 +5,9 @@
   "private": true,
   "scripts": {
     "settings-legacy:dev": "vite build --watch --mode development",
-    "settings-legacy:prod": "vite build"
+    "settings-legacy:prod": "vite build",
+    "setting:dev": "vite build --watch --mode development --config vite.config.settings.ts",
+    "setting:prod": "vite build --config vite.config.settings.ts"
   },
   "dependencies": {
     "@vitejs/plugin-vue": "^5.2.4",
