@@ -20,6 +20,9 @@ jobs:
         with:
           php-version: '8.2'
 
+      - name: Compile gettext .po files
+        run: find locale -name "*.po" -exec sh -c 'msgfmt "$1" -o "${1%.po}.mo"' _ {} \;
+
       - name: Run compress-app-plugin.php
         run: php compress-app-plugin.php shop/plugins/dbc -plugin-path .
 
