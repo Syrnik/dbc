@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.1] - 2026-06-15
+
+### Fixed
+- Plugin now correctly zeroes out shipping cost when the payment step is disabled in Shop-Script 12 checkout
+
+### Changed
+- Updated frontend dependencies: Vite 8, @vitejs/plugin-vue 6, TypeScript 6, Vue 3.5.38
+- Release workflow now compiles gettext .po files to .mo before packaging
+
 ## [1.2.0] - 2026-05-18
 
 ### Added
