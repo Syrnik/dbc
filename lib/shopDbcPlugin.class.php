@@ -139,9 +139,7 @@ class shopDbcPlugin extends shopPlugin
         if (!($shipping_id = intval($params['shipping_id'] ?? 0))) {
             return;
         }
-        if (!($payment_id = intval($params['payment_id'] ?? 0))) {
-            return;
-        }
+        $payment_id = intval($params['payment_id'] ?? 0);
 
         if (!$this->isNullifyRequired($shipping_id, $payment_id)) {
             if (isset($params['plugin_dbc.shipping'])) {
